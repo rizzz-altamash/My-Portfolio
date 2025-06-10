@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-:root {
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -23,4 +23,386 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+} */
+
+
+
+
+
+
+
+
+
+
+/* @keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 rgba(0, 255, 0, 0.75),
+      -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 rgba(0, 255, 0, 0.75),
+      -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.025em 0 rgba(255, 0, 0, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.025em 0 rgba(255, 0, 0, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 rgba(0, 255, 0, 0.75),
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 rgba(0, 255, 0, 0.75),
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 rgba(0, 255, 0, 0.75),
+      -0.025em -0.025em 0 rgba(255, 0, 0, 0.75),
+      -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+}
+
+.glitch {
+  animation: glitch 1s linear infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 15s linear infinite;
+}
+
+@keyframes skill-fill {
+  from {
+    width: 0;
+  }
+}
+
+.skill-bar {
+  animation: skill-fill 1s ease-out forwards;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.animate-matrix-fall {
+  animation: matrix-fall 4s linear infinite;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(150px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(150px) rotate(-360deg);
+  }
+}
+
+.animate-orbit {
+  animation: orbit 10s linear infinite;
+}
+
+@keyframes scramble-out {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+.page-transitioning main > * {
+  animation: scramble-out 0.5s ease-out forwards;
+} */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 rgba(0, 255, 0, 0.75),
+      -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 rgba(0, 255, 0, 0.75),
+      -0.05em -0.025em 0 rgba(255, 0, 0, 0.75),
+      0.025em 0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.025em 0 rgba(255, 0, 0, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 rgba(0, 255, 0, 0.75),
+      0.025em 0.025em 0 rgba(255, 0, 0, 0.75),
+      -0.05em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 rgba(0, 255, 0, 0.75),
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 rgba(0, 255, 0, 0.75),
+      0.05em 0 0 rgba(255, 0, 0, 0.75),
+      0 -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 rgba(0, 255, 0, 0.75),
+      -0.025em -0.025em 0 rgba(255, 0, 0, 0.75),
+      -0.025em -0.05em 0 rgba(0, 0, 255, 0.75);
+  }
+}
+
+.glitch {
+  animation: glitch 1s linear infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 15s linear infinite;
+}
+
+@keyframes skill-fill {
+  from {
+    width: 0;
+  }
+}
+
+.skill-bar {
+  animation: skill-fill 1s ease-out forwards;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes matrix-fall {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.animate-matrix-fall {
+  animation: matrix-fall 4s linear infinite;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(150px) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(150px) rotate(-360deg);
+  }
+}
+
+.animate-orbit {
+  animation: orbit 10s linear infinite;
+}
+
+@keyframes scramble-out {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 0;
+    filter: blur(10px);
+  }
+}
+
+/* Apply scramble animation to all content during transition */
+.page-transitioning * {
+  transition: all 0.3s ease-out;
+}
+
+.page-transitioning .font-mono {
+  letter-spacing: 0.002px;
+  text-shadow: 0 0 5px currentColor;
+}
+
+@keyframes text-scramble {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; letter-spacing: 2px; }
+  100% { opacity: 0.3; letter-spacing: 4px; }
+}
+
+.scramble-text {
+  animation: text-scramble 0.8s ease-out forwards;
+}
+
+/* Add glowing effect during transition */
+.page-transitioning .text-green-400,
+.page-transitioning .text-green-300 {
+  text-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
 }
