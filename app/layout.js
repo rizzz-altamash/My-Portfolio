@@ -3,6 +3,7 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Terminal, Cpu, Code, Database, Mail, Shield, Crown } from 'lucide-react';
+import { ChatbotProvider } from '@/contexts/ChatbotContext';
 import './globals.css';
 
 // Create transition context
@@ -211,11 +212,14 @@ export default function RootLayout({ children }) {
         </div>
 
         <TransitionContext.Provider value={{ isTransitioning, setIsTransitioning }}>
+          <ChatbotProvider>
           <Navigation />
           
           <main className="relative z-10">
             {children}
           </main>
+
+          </ChatbotProvider>
         </TransitionContext.Provider>
       </body>
     </html>
