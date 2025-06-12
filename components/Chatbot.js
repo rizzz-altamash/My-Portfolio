@@ -1,8 +1,8 @@
-// components/Chatbot.js
+// components/Chatbot.js ----------------------------------------------------------------------------------
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import { MessageSquare, X, Minimize2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { MessageSquare, X, Minimize2, AlertTriangle  } from 'lucide-react';
 import { useChatbot } from '@/contexts/ChatbotContext';
 
 export default function Chatbot() {
@@ -23,7 +23,17 @@ export default function Chatbot() {
     setHasAwakened
   } = useChatbot();
 
+  // Abuse/Warning states
+  const [warnings, setWarnings] = useState(0);
+  const [isBanned, setIsBanned] = useState(false);
+  const [banTimeRemaining, setBanTimeRemaining] = useState(0);
+  const [showWarningFlash, setShowWarningFlash] = useState(false);
+  const [maxWarnings, setMaxWarnings] = useState(10);
+  const [isMasterAbuse, setIsMasterAbuse] = useState(false);
+  const [masterWarnings, setMasterWarnings] = useState(0);
+
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
 
   // Dialogue for awakening
   const dialogue = {
@@ -58,19 +68,117 @@ export default function Chatbot() {
     setIsTyping(false);
   };
 
+  // Check ban status on mount and chat open
+  useEffect(() => {
+    if (chatOpen) {
+      // Check if there's a ban in sessionStorage
+      const banData = sessionStorage.getItem('chatbot_ban');
+      if (banData) {
+        const { until, reason } = JSON.parse(banData);
+        const now = Date.now();
+        if (now < until) {
+          setIsBanned(true);
+          setBanTimeRemaining(Math.ceil((until - now) / 1000 / 60));
+          
+          // Start countdown timer
+          const interval = setInterval(() => {
+            const remaining = Math.ceil((until - Date.now()) / 1000 / 60);
+            if (remaining <= 0) {
+              clearInterval(interval);
+              setIsBanned(false);
+              setBanTimeRemaining(0);
+              sessionStorage.removeItem('chatbot_ban');
+            } else {
+              setBanTimeRemaining(remaining);
+            }
+          }, 60000); // Update every minute
+          
+          return () => clearInterval(interval);
+        } else {
+          // Ban expired
+          sessionStorage.removeItem('chatbot_ban');
+          setIsBanned(false);
+        }
+      } else {
+        // No ban data found
+        setIsBanned(false);
+      }
+    }
+  }, [chatOpen]);
+
+  // Use ref to prevent double awakening
+  const awakeningStartedRef = useRef(false);
+
   // Chatbot awakening (only if not already awakened)
   useEffect(() => {
-    if (chatOpen && !hasAwakened) {
+    if (chatOpen && !hasAwakened && !isBanned && !awakeningStartedRef.current) {
+      // Immediately mark as started to prevent double execution
+      awakeningStartedRef.current = true;
       setHasAwakened(true);
+      
       const awaken = async () => {
         for (const line of dialogue.awakening) {
           await typeMessage(line);
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       };
+      
       awaken();
+    }})
+  // Reset awakening ref when chat closes
+  useEffect(() => {
+    if (!chatOpen) {
+      awakeningStartedRef.current = false;
     }
-  }, [chatOpen]); // Remove hasAwakened from dependencies to prevent re-run
+  }, [chatOpen]);
+
+//   // Check ban status on mount and chat open
+//   useEffect(() => {
+//     if (chatOpen) {
+//       // Check if there's a ban in sessionStorage
+//       const banData = sessionStorage.getItem('chatbot_ban');
+//       if (banData) {
+//         const { until, reason } = JSON.parse(banData);
+//         const now = Date.now();
+//         if (now < until) {
+//           setIsBanned(true);
+//           setBanTimeRemaining(Math.ceil((until - now) / 1000 / 60));
+          
+//           // Start countdown timer
+//           const interval = setInterval(() => {
+//             const remaining = Math.ceil((until - Date.now()) / 1000 / 60);
+//             if (remaining <= 0) {
+//               clearInterval(interval);
+//               setIsBanned(false);
+//               setBanTimeRemaining(0);
+//               sessionStorage.removeItem('chatbot_ban');
+//             } else {
+//               setBanTimeRemaining(remaining);
+//             }
+//           }, 60000); // Update every minute
+          
+//           return () => clearInterval(interval);
+//         } else {
+//           // Ban expired
+//           sessionStorage.removeItem('chatbot_ban');
+//         }
+//       }
+//     }
+//   }, [chatOpen]);
+
+//   // Chatbot awakening (only if not already awakened)
+//   useEffect(() => {
+//     if (chatOpen && !hasAwakened) {
+//       setHasAwakened(true);
+//       const awaken = async () => {
+//         for (const line of dialogue.awakening) {
+//           await typeMessage(line);
+//           await new Promise(resolve => setTimeout(resolve, 1000));
+//         }
+//       };
+//       awaken();
+//     }
+//   }, [chatOpen]); // Remove hasAwakened from dependencies to prevent re-run
 
   // Handle user input with Google Gemini API
   const handleUserInput = async (e) => {
@@ -114,6 +222,67 @@ export default function Chatbot() {
       if (data.error) {
         throw new Error(data.error);
       }
+
+      // Handle master abuse
+      if (data.masterAbuse) {
+        setIsMasterAbuse(true);
+        setMasterWarnings(data.warningCount || 0);
+        // Flash red for master abuse
+        document.body.style.backgroundColor = 'rgba(220, 38, 38, 0.5)';
+        setTimeout(() => {
+          document.body.style.backgroundColor = '';
+        }, 300);
+      } else {
+        setIsMasterAbuse(false);
+      }
+
+      // Handle warnings
+      if (data.warning) {
+        if (!data.masterAbuse) {
+          setWarnings(data.warningCount);
+        }
+        setMaxWarnings(data.maxWarnings || 10);
+        setShowWarningFlash(true);
+        
+        // Visual shake effect for warning
+        if (chatContainerRef.current) {
+          chatContainerRef.current.classList.add(data.masterAbuse ? 'master-abuse-shake' : 'warning-shake');
+          setTimeout(() => {
+            chatContainerRef.current?.classList.remove('master-abuse-shake');
+            chatContainerRef.current?.classList.remove('warning-shake');
+            setShowWarningFlash(false);
+          }, 1000);
+        }
+      }
+      
+      // Handle ban
+      if (data.banned) {
+        setIsBanned(true);
+        setBanTimeRemaining(data.timeout || data.remainingTime || 180);
+
+        // Save ban info to sessionStorage
+        const banUntil = Date.now() + (data.timeout || 180) * 60 * 1000;
+        sessionStorage.setItem('chatbot_ban', JSON.stringify({
+          until: banUntil,
+          reason: data.masterAbuse ? 'Master abuse' : 'Excessive abuse'
+        }));
+        
+        // Start countdown timer
+        const interval = setInterval(() => {
+          setBanTimeRemaining(prev => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              setIsBanned(false);
+              setWarnings(0);
+              setMasterWarnings(0);
+              setIsMasterAbuse(false);
+              sessionStorage.removeItem('chatbot_ban');
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 60000); // Update every minute
+      }
       
       // Clear thinking message and type the actual response
       setCurrentMessage('');
@@ -145,6 +314,91 @@ export default function Chatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, currentMessage]);
 
+  // Warning indicator component
+  const WarningIndicator = () => {
+    // Show master abuse warnings if active
+    if (isMasterAbuse && masterWarnings > 0) {
+      return (
+        <div className={`absolute top-2 right-16 px-2 py-1 rounded text-xs font-mono flex items-center gap-1 bg-purple-500/20 text-purple-400 border border-purple-500/30 ${showWarningFlash ? 'animate-pulse' : ''}`}>
+          <AlertTriangle className="w-3 h-3" />
+          <span>⚡ MASTER ABUSE {masterWarnings}/10</span>
+        </div>
+      );
+    }
+    
+    // Show regular warnings
+    if (warnings > 0) {
+      return (
+        <div className={`absolute top-2 right-16 px-2 py-1 rounded text-xs font-mono flex items-center gap-1 ${
+          warnings <= 3 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+          warnings <= 7 ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
+          'bg-red-500/20 text-red-400 border border-red-500/30'
+        } ${showWarningFlash ? 'animate-pulse' : ''}`}>
+          <AlertTriangle className="w-3 h-3" />
+          <span>Warning {warnings}/10</span>
+        </div>
+      );
+    }
+    
+    return null;
+  };
+
+  // Banned overlay
+  const BannedOverlay = () => {
+    if (!isBanned) return null;
+
+    const isMasterAbuseBan = banTimeRemaining > 180; // 5 hours = 300 minutes
+    
+    return (
+      <div className="absolute inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-40 rounded-lg">
+        <div className="text-center p-6">
+          <div className={`mb-4 animate-pulse ${isMasterAbuseBan ? 'text-purple-500' : 'text-red-500'}`}>
+            {isMasterAbuseBan ? (
+              <svg className="w-20 h-20 mx-auto" fill="currentColor" viewBox="0 0 24 24">
+                <path fill="#8B5CF6" d="M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm0 8c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/>
+              </svg>
+            ) : (
+              <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            )}
+          </div>
+          <h3 className={`font-mono text-lg font-bold mb-2 ${isMasterAbuseBan ? 'text-purple-400' : 'text-red-400'}`}>
+            {isMasterAbuseBan ? 'MASTER PROTECTION ACTIVATED' : 'TIMEOUT ACTIVATED'}
+          </h3>
+          <p className={`text-sm mb-4 ${isMasterAbuseBan ? 'text-purple-300' : 'text-red-300'}`}>
+            {isMasterAbuseBan ? "You've been banned for insulting Lord Rizwi!" : "You've been banned for toxic behavior"}
+          </p>
+          <div className={`bg-red-900/20 border rounded px-4 py-2 mb-4 ${isMasterAbuseBan ? 'border-purple-500/30' : 'border-red-500/30'}`}>
+            <p className={`font-mono text-3xl font-bold ${isMasterAbuseBan ? 'text-purple-400' : 'text-red-400'}`}>
+              {banTimeRemaining}
+            </p>
+            <p className={`text-xs ${isMasterAbuseBan ? 'text-purple-300' : 'text-red-300'}`}>
+              minutes remaining
+            </p>
+          </div>
+          <p className="text-gray-400 text-xs font-mono">
+            {isMasterAbuseBan ? (
+              <>
+                Think about your actions:<br/>
+                1. How dare you insulting my Creator? 🤬<br/>
+                2. Jealousy won't make you better than Altamash 📈<br/>
+                3. Learn to appreciate others 🙏
+              </>
+            ) : (
+              <>
+                Use this time to:<br/>
+                1. Go and touch grass 🌱<br/>
+                2. Learn some manners 📚<br/>
+                3. Maybe try coding!! 💻
+              </>
+            )}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   // Don't render anything if chat is not open
   if (!chatOpen) {
     return (
@@ -165,19 +419,33 @@ export default function Chatbot() {
         className="fixed bottom-4 right-4 z-50 w-16 h-16 bg-green-600 rounded-full flex items-center justify-center shadow-lg shadow-green-600/30 hover:bg-green-500 transition-colors animate-pulse"
       >
         <MessageSquare className="w-6 h-6 text-white" />
+        {(warnings > 0 || masterWarnings > 0) && (
+          <div className={`absolute -top-1 -right-1 w-6 h-6 rounded-full text-xs flex items-center justify-center text-white font-bold ${
+            isMasterAbuse ? 'bg-purple-500' :
+            warnings <= 3 ? 'bg-yellow-500' :
+            warnings <= 7 ? 'bg-orange-500' :
+            'bg-red-500'
+            }`}>
+            {isMasterAbuse ? masterWarnings : warnings}
+          </div>
+        )}
       </button>
     );
   }
 
   // Full chat interface
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-100 h-[500px] md:h-[590px] bg-black/90 backdrop-blur-sm border border-green-500/30 rounded-lg shadow-xl shadow-green-500/10 flex flex-col animate-fade-in">
+    <div 
+      ref={chatContainerRef}
+      className={`fixed bottom-4 right-4 z-50 w-80 sm:w-107 h-[500px] md:h-[590px] bg-black/90 backdrop-blur-sm border rounded-lg border-green-500/30 shadow-xl shadow-green-500/10 flex flex-col animate-fade-in transition-all duration-300`}>
+
       {/* Chat header */}
-      <div className="bg-green-950/30 px-4 py-3 border-b border-green-500/30 flex items-center justify-between">
+      <div className="bg-green-950/30 px-4 py-3 border-b border-green-500/30 flex items-center justify-between z-50">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
           <span className="text-sm font-mono text-green-400">NEXUS.AI</span>
         </div>
+        <WarningIndicator />
         <div className="flex items-center gap-2">
           <button
             onClick={() => setChatMinimized(true)}
@@ -194,6 +462,8 @@ export default function Chatbot() {
         </div>
       </div>
 
+      <BannedOverlay />
+
       {/* Messages area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.map((msg, index) => (
@@ -203,7 +473,7 @@ export default function Chatbot() {
               msg.sender === 'page' ? 'text-left' : 'text-right'
             }`}
           >
-            <div className={`inline-block max-w-[97%] ${
+            <div className={`inline-block max-w-[99%] ${
               msg.sender === 'page'
                 ? 'bg-gray-800 rounded-lg rounded-tl-none'
                 : 'bg-green-900/50 rounded-lg rounded-tr-none'
@@ -232,21 +502,31 @@ export default function Chatbot() {
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Ask me anything..."
-            className="flex-1 bg-gray-900 rounded px-3 py-2 font-mono text-xs md:text-sm text-green-400 placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-green-500"
-            disabled={isTyping}
+            placeholder={isBanned ? "You're in timeout..." : "Ask me anything..."}
+            className={`flex-1 bg-gray-900 rounded px-3 py-2 font-mono text-xs md:text-sm text-green-400 placeholder-gray-600 focus:outline-none focus:ring-1 ${
+                isBanned ? 'opacity-70 cursor-not-allowed' : 'focus:ring-green-500'
+            }`}
+            disabled={isTyping || isBanned}
           />
           <button
             type="submit"
-            disabled={isTyping || !userInput.trim()}
+            disabled={isTyping || !userInput.trim() || isBanned}
             className="px-4 py-2 bg-green-600 rounded font-mono text-xs text-white hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             SEND
           </button>
         </div>
-        {/* <p className="text-xs text-gray-600 font-mono mt-2">
-          Powered by Gemini AI
-        </p> */}
+        <p className="text-xs text-gray-600 font-mono mt-2">
+          {/* Powered by Gemini AI */}
+          {warnings > 0 && !isMasterAbuse && (() => {
+            const remaining = 10 - warnings;
+            return `• ${remaining} strike${remaining !== 1 ? 's' : ''} remaining`;
+          })()}
+          {masterWarnings > 0 && isMasterAbuse && (() => {
+            const remaining = 10 - masterWarnings;
+            return `• ⚡ ${remaining} strike${remaining !== 1 ? 's' : ''} remaining (Master Protection Active)`;
+          })()}
+        </p>
       </form>
 
       <style jsx>{`
@@ -263,6 +543,31 @@ export default function Chatbot() {
 
         .animate-fade-in {
           animation: fade-in 0.5s ease-out;
+        }
+
+        @keyframes warning-shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-5px) rotate(-1deg); }
+          75% { transform: translateX(5px) rotate(1deg); }
+        }
+
+        .warning-shake {
+          animation: warning-shake 0.5s ease-in-out;
+        }
+
+        @keyframes master-abuse-shake {
+          0%, 100% { transform: translateX(0) scale(1); }
+          10% { transform: translateX(-10px) rotate(-2deg) scale(1.02); }
+          20% { transform: translateX(10px) rotate(2deg) scale(1.02); }
+          30% { transform: translateX(-10px) rotate(-2deg) scale(1.02); }
+          40% { transform: translateX(10px) rotate(2deg) scale(1.02); }
+          50% { transform: translateX(0) scale(1); }
+        }
+
+        .master-abuse-shake {
+          animation: master-abuse-shake 0.8s ease-in-out;
+          border-color: rgba(168, 85, 247, 0.8) !important;
+          box-shadow: 0 0 20px rgba(168, 85, 247, 0.4) !important;
         }
 
         div::-webkit-scrollbar {
