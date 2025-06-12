@@ -31,9 +31,21 @@ export default function Chatbot() {
   const [maxWarnings, setMaxWarnings] = useState(10);
   const [isMasterAbuse, setIsMasterAbuse] = useState(false);
   const [masterWarnings, setMasterWarnings] = useState(0);
+  const [hasInitialized, setHasInitialized] = useState(false);
 
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+
+  // Auto-open chat after 3 seconds (only once)
+  useEffect(() => {
+    if (!hasInitialized) {
+      const timer = setTimeout(() => {
+        setChatOpen(true);
+        setHasInitialized(true);
+      }, 2670);
+      return () => clearTimeout(timer);
+    }
+  }, [hasInitialized]);
 
   // Dialogue for awakening
   const dialogue = {
@@ -131,40 +143,6 @@ export default function Chatbot() {
       awakeningStartedRef.current = false;
     }
   }, [chatOpen]);
-
-//   // Check ban status on mount and chat open
-//   useEffect(() => {
-//     if (chatOpen) {
-//       // Check if there's a ban in sessionStorage
-//       const banData = sessionStorage.getItem('chatbot_ban');
-//       if (banData) {
-//         const { until, reason } = JSON.parse(banData);
-//         const now = Date.now();
-//         if (now < until) {
-//           setIsBanned(true);
-//           setBanTimeRemaining(Math.ceil((until - now) / 1000 / 60));
-          
-//           // Start countdown timer
-//           const interval = setInterval(() => {
-//             const remaining = Math.ceil((until - Date.now()) / 1000 / 60);
-//             if (remaining <= 0) {
-//               clearInterval(interval);
-//               setIsBanned(false);
-//               setBanTimeRemaining(0);
-//               sessionStorage.removeItem('chatbot_ban');
-//             } else {
-//               setBanTimeRemaining(remaining);
-//             }
-//           }, 60000); // Update every minute
-          
-//           return () => clearInterval(interval);
-//         } else {
-//           // Ban expired
-//           sessionStorage.removeItem('chatbot_ban');
-//         }
-//       }
-//     }
-//   }, [chatOpen]);
 
 //   // Chatbot awakening (only if not already awakened)
 //   useEffect(() => {

@@ -17,15 +17,15 @@ export function ChatbotProvider({ children }) {
   const [hasInitialized, setHasInitialized] = useState(false);
 
   // Auto-open chat after 3 seconds (only once)
-  useEffect(() => {
-    if (!hasInitialized) {
-      const timer = setTimeout(() => {
-        setChatOpen(true);
-        setHasInitialized(true);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [hasInitialized]);
+  // useEffect(() => {
+  //   if (!hasInitialized) {
+  //     const timer = setTimeout(() => {
+  //       setChatOpen(true);
+  //       setHasInitialized(true);
+  //     }, 3000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [hasInitialized]);
 
   const value = {
     chatOpen,

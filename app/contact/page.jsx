@@ -9003,7 +9003,8 @@
 // app/contact/page.js
 'use client';
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Send, Satellite, Radio, Activity, Zap, Github, Linkedin, Twitter, ChevronRight, Instagram, Facebook, Loader, Sparkles } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Send, Satellite, Radio, Activity, Zap, Github, Linkedin, Twitter, ChevronRight, Instagram, Facebook, Loader, Radar } from 'lucide-react';
 import { useTransition } from '../layout';
 import ScrambledText from '@/components/ScrambledText';
 
@@ -9369,34 +9370,83 @@ export default function ContactPage() {
     }
   }, [channels]);
 
-  const handleFormSubmit = useCallback((e) => {
+  const handleFormSubmit = useCallback(async (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
+    
+    // Validation
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
 
     setIsTransmitting(true);
     setTransmissionProgress(0);
     
+    // Progress animation
+    let progress = 0;
     const progressInterval = setInterval(() => {
-      setTransmissionProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          setTimeout(() => {
-            setIsTransmitting(false);
-            setFormData({ name: '', email: '', message: '' });
-            setTransmissionProgress(0);
-          }, 500);
-          return 100;
-        }
-        // return prev + Math.random() * 15 + 5;
-
-        // Calculate increment
-        const increment = Math.random() * 15 + 5;
-        const nextValue = prev + increment;
-        
-        // Cap at 100 before returning
-        return Math.min(nextValue, 100);
-      });
+      progress += Math.random() * 15 + 5;
+      if (progress > 90) {
+        progress = 90;
+        clearInterval(progressInterval);
+      }
+      setTransmissionProgress(progress);
     }, 200);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Complete progress
+        setTransmissionProgress(100);
+        
+        // Show success message
+        toast.success('TRANSMISSION SUCCESSFUL!', {
+          duration: 5000,
+          icon: '🚀',
+        });
+        
+        // Reset form after animation
+        setTimeout(() => {
+          setIsTransmitting(false);
+          setFormData({ name: '', email: '', message: '' });
+          setTransmissionProgress(0);
+        }, 500);
+        
+      } else if (response.status === 429) {
+        // Rate limited
+        throw new Error(data.error || 'Too many requests. Please try again later.');
+      } else {
+        throw new Error(data.error || 'Failed to send message');
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+      clearInterval(progressInterval);
+      setTransmissionProgress(0);
+      setIsTransmitting(false);
+      
+      // Show error message
+      toast.error(error.message || 'TRANSMISSION FAILED', {
+        duration: 5000,
+        icon: '❌',
+      });
+    }
   }, [formData]);
 
   const handleHoverSignal = useCallback((id) => setHoveredSignal(id), []);
@@ -9490,8 +9540,8 @@ export default function ContactPage() {
             </span>
             <span className="text-green-400 hidden sm:inline">◈</span>
             <span className="flex items-center gap-1 sm:gap-2 sm:flex">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 animate-pulse" />
-              QUANTUM FIELD ACTIVE
+              <Radar className="w-3 h-3 sm:w-4 sm:h-4 text-green-400 animate-pulse" />
+              SONAR DETECTOR ACTIVE
             </span>
           </div>
         </div>

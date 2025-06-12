@@ -7,94 +7,11 @@ import Image from 'next/image';
 import { useTransition } from './layout';
 import ScrambledText from '@/components/ScrambledText';
 
-// Text Scramble Hook
-const useTextScramble = (text, duration = 2000) => {
-  const [scrambledText, setScrambledText] = useState(text);
-  const [displayText, setDisplayText] = useState(text);
-  const chars = '!<>-_\\/[]{}—=+*^?#_____';
-  const intervalRef = useRef(null);
-  const { isTransitioning } = useTransition();
-
-  // Handle scramble in effect
-  useEffect(() => {
-    if (isTransitioning) return;
-    
-    let iteration = 0;
-    const originalText = text;
-    const textLength = originalText.length;
-    
-    intervalRef.current = setInterval(() => {
-      setScrambledText(
-        originalText
-          .split('')
-          .map((char, index) => {
-            if (index < iteration) {
-              return originalText[index];
-            }
-            if (char === ' ') return ' ';
-            return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join('')
-      );
-
-      if (iteration >= textLength) {
-        clearInterval(intervalRef.current);
-      }
-      iteration += 1/3;
-    }, 30);
-
-    return () => clearInterval(intervalRef.current);
-  }, [text, isTransitioning]);
-
-  // Handle scramble out effect
-  useEffect(() => {
-    if (!isTransitioning) {
-      setDisplayText(scrambledText);
-      return;
-    }
-
-    let iteration = 0;
-    const currentText = scrambledText;
-    const textLength = currentText.length;
-    
-    const scrambleOut = setInterval(() => {
-      setDisplayText(
-        currentText
-          .split('')
-          .map((char, index) => {
-            if (index >= textLength - iteration) {
-              return chars[Math.floor(Math.random() * chars.length)];
-            }
-            return char;
-          })
-          .join('')
-      );
-
-      if (iteration >= textLength) {
-        clearInterval(scrambleOut);
-      }
-      iteration += 2;
-    }, 20);
-
-    return () => clearInterval(scrambleOut);
-  }, [isTransitioning, scrambledText]);
-
-  return displayText;
-};
-
-// Floating Orb Component
-const FloatingOrb = ({ scrollY }) => {
+const MyPhoto = () => {
   const { isTransitioning } = useTransition();
   
   return (
-    <div 
-      className={`w-64 h-64 md:w-96 md:h-96 pointer-events-none ${isTransitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-700`}
-      style={{
-        transform: `translate(${scrollY * 0.1}px, ${scrollY * 0.05}px)`,
-        right: '10%',
-        top: '20%',
-      }}
-    >
+    <div className={`w-64 h-64 md:w-96 md:h-96 pointer-events-none ${isTransitioning ? 'opacity-0' : 'opacity-100'} transition-opacity duration-700`}>
       <div className="relative w-full h-full">
         <div className="absolute inset-0 bg-green-400 rounded-full blur-3xl opacity-20 animate-pulse" />
         
@@ -117,20 +34,12 @@ const FloatingOrb = ({ scrollY }) => {
 
 export default function HomePage() {
   const { isTransitioning } = useTransition();
-  // const titleText = useTextScramble("WELCOME TO MY PORTFOLIO", 2000);
-  // const subtitleText = useTextScramble("Full Stack Developer | Ethical Hacker | System Architect", 2500);
   const [showElements, setShowElements] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', handleScroll);
-    
     if (!isTransitioning) {
       setTimeout(() => setShowElements(true), 2500);
     }
-    
-    return () => window.removeEventListener('scroll', handleScroll);
   }, [isTransitioning]);
 
   useEffect(() => {
@@ -141,8 +50,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden pt-16 px-4 md:px-8 lg:px-12">
-      {/* <FloatingOrb scrollY={scrollY} /> */}
-
       <div className="flex-1 flex items-center justify-center">
       <div className="relative z-10 max-w-7xl px-8 md:px-12 lg:px-16">
         <div className="mb-8">
@@ -153,8 +60,6 @@ export default function HomePage() {
             </span>
           </div>
         </div>
-
-        <ScrambledText text="" />
         
         <div className="flex flex-wrap items-center justify-center">
           <div className="max-w-2xl">
@@ -173,7 +78,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <FloatingOrb scrollY={scrollY} />
+          <MyPhoto />
 
         </div>
 

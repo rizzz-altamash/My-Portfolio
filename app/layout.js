@@ -4,6 +4,7 @@ import React, { useState, useEffect, createContext, useContext } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Terminal, Cpu, Code, Database, Mail, Shield, Crown } from 'lucide-react';
 import { ChatbotProvider } from '@/contexts/ChatbotContext';
+import { Toaster } from 'react-hot-toast';
 import './globals.css';
 
 // Create transition context
@@ -217,6 +218,30 @@ export default function RootLayout({ children }) {
           
           <main className="relative z-10">
             {children}
+
+            <Toaster
+              position="bottom-right"
+              toastOptions={{
+                style: {
+                  background: '#000',
+                  color: '#00ff41',
+                  border: '1px solid #00ff41',
+                  fontFamily: 'monospace',
+                  fontSize: '14px',
+                },
+                success: {
+                  style: {
+                    border: '1px solid #00ff41',
+                  },
+                },
+                error: {
+                  style: {
+                    border: '1px solid #ff0041',
+                    color: '#ff0041',
+                  },
+                },
+              }}
+            />
           </main>
 
           </ChatbotProvider>
