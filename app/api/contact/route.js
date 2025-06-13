@@ -138,136 +138,289 @@ export async function POST(request) {
       subject: `🚀 New Portfolio Contact from ${name}`,
       html: `
         <!DOCTYPE html>
-        <html>
-          <head>
-            <style>
-              body { margin: 0; padding: 0; background-color: #0a0a0a; }
-              .container { 
-                max-width: 600px; 
-                margin: 0 auto; 
-                background-color: #000; 
-                border: 2px solid #00ff41;
-                font-family: 'Courier New', monospace;
-              }
-              .header {
-                background: linear-gradient(135deg, #001a00 0%, #003300 100%);
-                color: #00ff41;
-                padding: 30px;
-                text-align: center;
-                border-bottom: 2px solid #00ff41;
-              }
-              .content {
-                padding: 30px;
-                color: #00ff88;
-              }
-              .info-row {
-                margin: 15px 0;
-                padding: 10px;
-                background-color: #001a00;
-                border-left: 3px solid #00ff41;
-              }
-              .label {
-                color: #00ff41;
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 12px;
-              }
-              .value {
-                color: #ffffff;
-                margin-top: 5px;
-                word-break: break-all;
-              }
-              .message-box {
-                background-color: #001a00;
-                border: 1px solid #00ff41;
-                padding: 20px;
-                margin: 20px 0;
-                color: #ffffff;
-                white-space: pre-wrap;
-                line-height: 1.6;
-              }
-              .footer {
-                background-color: #001a00;
-                padding: 20px;
-                text-align: center;
-                color: #00ff41;
-                font-size: 12px;
-                border-top: 1px solid #00ff41;
-              }
-              .pulse {
-                display: inline-block;
-                width: 8px;
-                height: 8px;
-                background-color: #00ff41;
-                border-radius: 50%;
-                margin-right: 10px;
-                animation: pulse 2s infinite;
-              }
-              @keyframes pulse {
-                0% { opacity: 1; }
-                50% { opacity: 0.3; }
-                100% { opacity: 1; }
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1 style="margin: 0; font-size: 24px; letter-spacing: 2px;">
-                  <span class="pulse"></span>NEW TRANSMISSION RECEIVED
-                </h1>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                body { 
+                  margin: 0; 
+                  padding: 20px; 
+                  background-color: #0a0a0a;
+                  font-family: 'Courier New', Consolas, monospace;
+                }
+                .container { 
+                  max-width: 600px; 
+                  margin: 0 auto; 
+                  background-color: #000; 
+                  border: 2px solid #00ff41;
+                  border-radius: 16px;
+                  overflow: hidden;
+                  box-shadow: 
+                    0 0 40px rgba(0, 255, 65, 0.3),
+                    0 20px 60px rgba(0, 0, 0, 0.5),
+                    inset 0 0 120px rgba(0, 255, 65, 0.05);
+                }
+                .header {
+                  background: linear-gradient(135deg, #001a00 0%, #002200 50%, #003300 100%);
+                  color: #00ff41;
+                  padding: 40px 30px;
+                  text-align: center;
+                  border-bottom: 2px solid #00ff41;
+                  position: relative;
+                  overflow: hidden;
+                }
+                .header::before {
+                  content: '';
+                  position: absolute;
+                  top: -50%;
+                  left: -50%;
+                  width: 200%;
+                  height: 200%;
+                  background: radial-gradient(circle, rgba(0, 255, 65, 0.1) 0%, transparent 70%);
+                  animation: rotate 20s linear infinite;
+                }
+                @keyframes rotate {
+                  from { transform: rotate(0deg); }
+                  to { transform: rotate(360deg); }
+                }
+                .header h1 {
+                  margin: 0; 
+                  font-size: 26px; 
+                  letter-spacing: 3px;
+                  text-shadow: 
+                    0 0 20px rgba(0, 255, 65, 0.8),
+                    0 0 40px rgba(0, 255, 65, 0.4);
+                  position: relative;
+                  z-index: 1;
+                }
+                .content {
+                  padding: 40px 30px;
+                  background: linear-gradient(180deg, #0a0a0a 0%, #050505 100%);
+                }
+                .info-row {
+                  margin: 20px 0;
+                  padding: 16px 20px;
+                  background: linear-gradient(135deg, rgba(0, 26, 0, 0.8) 0%, rgba(0, 26, 0, 0.4) 100%);
+                  border-left: 3px solid #00ff41;
+                  border-radius: 8px;
+                  transition: all 0.3s ease;
+                  position: relative;
+                  overflow: hidden;
+                }
+                .info-row::before {
+                  content: '';
+                  position: absolute;
+                  top: 0;
+                  left: -100%;
+                  width: 100%;
+                  height: 100%;
+                  background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+                  transition: left 0.5s ease;
+                }
+                .info-row:hover::before {
+                  left: 100%;
+                }
+                .label {
+                  color: #00ff41;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  font-size: 11px;
+                  letter-spacing: 2px;
+                  opacity: 0.9;
+                }
+                .value {
+                  color: #ffffff;
+                  margin-top: 8px;
+                  word-break: break-all;
+                  font-size: 14px;
+                  text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+                }
+                .message-box {
+                  background: linear-gradient(135deg, #001a00 0%, #000d00 100%);
+                  border: 1px solid rgba(0, 255, 65, 0.6);
+                  border-radius: 12px;
+                  padding: 25px;
+                  margin: 30px 0;
+                  color: #ffffff;
+                  white-space: pre-wrap;
+                  line-height: 1.8;
+                  font-size: 14px;
+                  box-shadow: 
+                    inset 0 2px 20px rgba(0, 255, 65, 0.1),
+                    0 5px 20px rgba(0, 0, 0, 0.5);
+                }
+                .message-label {
+                  color: #00ff41;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  font-size: 12px;
+                  letter-spacing: 2px;
+                  margin-bottom: 20px;
+                  display: flex;
+                  align-items: center;
+                  gap: 10px;
+                }
+                .message-label::before {
+                  content: '';
+                  width: 30px;
+                  height: 1px;
+                  background: linear-gradient(90deg, transparent, #00ff41);
+                }
+                .message-label::after {
+                  content: '';
+                  flex: 1;
+                  height: 1px;
+                  background: linear-gradient(90deg, #00ff41, transparent);
+                }
+                .action-button {
+                  display: inline-block;
+                  margin-top: 30px;
+                  padding: 16px 40px;
+                  background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%);
+                  color: #000;
+                  text-decoration: none;
+                  font-weight: bold;
+                  text-transform: uppercase;
+                  letter-spacing: 2px;
+                  border-radius: 8px;
+                  font-size: 13px;
+                  transition: all 0.3s ease;
+                  box-shadow: 
+                    0 4px 20px rgba(0, 255, 65, 0.4),
+                    0 0 40px rgba(0, 255, 65, 0.2),
+                    inset 0 0 20px rgba(255, 255, 255, 0.2);
+                  position: relative;
+                  overflow: hidden;
+                }
+                .action-button::before {
+                  content: '';
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  width: 0;
+                  height: 0;
+                  background: rgba(255, 255, 255, 0.3);
+                  border-radius: 50%;
+                  transform: translate(-50%, -50%);
+                  transition: width 0.5s, height 0.5s;
+                }
+                .action-button:hover {
+                  background: linear-gradient(135deg, #00ff88 0%, #00ff41 100%);
+                  transform: translateY(-2px);
+                  box-shadow: 
+                    0 6px 30px rgba(0, 255, 65, 0.5),
+                    0 0 60px rgba(0, 255, 65, 0.3),
+                    inset 0 0 30px rgba(255, 255, 255, 0.3);
+                }
+                .action-button:hover::before {
+                  width: 300px;
+                  height: 300px;
+                }
+                .footer {
+                  background: linear-gradient(180deg, #001a00 0%, #000000 100%);
+                  padding: 30px 20px;
+                  text-align: center;
+                  color: #00ff41;
+                  font-size: 11px;
+                  border-top: 1px solid rgba(0, 255, 65, 0.3);
+                  letter-spacing: 1px;
+                }
+                .footer p {
+                  margin: 8px 0;
+                  opacity: 0.8;
+                }
+                .footer .dim {
+                  color: #666;
+                  font-size: 10px;
+                  opacity: 0.6;
+                }
+                .pulse {
+                  display: inline-block;
+                  width: 8px;
+                  height: 8px;
+                  background-color: #00ff41;
+                  border-radius: 50%;
+                  margin-right: 12px;
+                  box-shadow: 0 0 15px #00ff41;
+                  animation: pulse 2s infinite;
+                }
+                @keyframes pulse {
+                  0% { 
+                    opacity: 1;
+                    box-shadow: 0 0 15px #00ff41;
+                  }
+                  50% { 
+                    opacity: 0.3;
+                    box-shadow: 0 0 5px #00ff41;
+                  }
+                  100% { 
+                    opacity: 1;
+                    box-shadow: 0 0 15px #00ff41;
+                  }
+                }
+                .status-badge {
+                  display: inline-block;
+                  background: rgba(0, 255, 65, 0.1);
+                  border: 1px solid rgba(0, 255, 65, 0.3);
+                  padding: 4px 12px;
+                  border-radius: 20px;
+                  font-size: 10px;
+                  letter-spacing: 1px;
+                  margin-top: 10px;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <h1>
+                    <span class="pulse"></span>NEW TRANSMISSION RECEIVED
+                  </h1>
+                  <div class="status-badge">SECURE CONNECTION</div>
+                </div>
+                
+                <div class="content">
+                  <div class="info-row">
+                    <div class="label">SENDER IDENTIFICATION</div>
+                    <div class="value">${name}</div>
+                  </div>
+                  
+                  <div class="info-row">
+                    <div class="label">RETURN EMAIL</div>
+                    <div class="value">${email}</div>
+                  </div>
+                  
+                  <div class="info-row">
+                    <div class="label">TIMESTAMP</div>
+                    <div class="value">${timestamp}</div>
+                  </div>
+                  
+                  <div class="info-row">
+                    <div class="label">ORIGIN IP</div>
+                    <div class="value">${ip}</div>
+                  </div>
+                  
+                  <div style="margin: 40px 0;">
+                    <div class="message-label">ENCRYPTED MESSAGE</div>
+                    <div class="message-box">${message}</div>
+                  </div>
+                  
+                  <div style="text-align: center;">
+                    <a href="mailto:${email}" class="action-button">
+                      REPLY TO TRANSMISSION
+                    </a>
+                  </div>
+                </div>
+                
+                <div class="footer">
+                  <p>◈ TRANSMISSION END ◈</p>
+                  <p class="dim">This message was sent from your Portfolio contact form</p>
+                  <p class="dim">NEXUS SECURE MAIL SYSTEM v2.0.7</p>
+                </div>
               </div>
-              
-              <div class="content">
-                <div class="info-row">
-                  <div class="label">SENDER IDENTIFICATION</div>
-                  <div class="value">${name}</div>
-                </div>
-                
-                <div class="info-row">
-                  <div class="label">RETURN FREQUENCY</div>
-                  <div class="value">${email}</div>
-                </div>
-                
-                <div class="info-row">
-                  <div class="label">TIMESTAMP</div>
-                  <div class="value">${timestamp}</div>
-                </div>
-                
-                <div class="info-row">
-                  <div class="label">ORIGIN IP</div>
-                  <div class="value">${ip}</div>
-                </div>
-                
-                <div style="margin: 30px 0;">
-                  <div class="label" style="margin-bottom: 10px;">ENCRYPTED MESSAGE</div>
-                  <div class="message-box">${message}</div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 30px;">
-                  <a href="mailto:${email}" style="
-                    display: inline-block;
-                    padding: 12px 30px;
-                    background-color: #00ff41;
-                    color: #000;
-                    text-decoration: none;
-                    font-weight: bold;
-                    text-transform: uppercase;
-                    letter-spacing: 1px;
-                    transition: all 0.3s;
-                  ">REPLY TO TRANSMISSION</a>
-                </div>
-              </div>
-              
-              <div class="footer">
-                <p style="margin: 5px 0;">TRANSMISSION END</p>
-                <p style="margin: 5px 0; font-size: 10px; color: #666;">
-                  This message was sent from your portfolio contact form
-                </p>
-              </div>
-            </div>
-          </body>
-        </html>
+            </body>
+          </html>
       `,
       text: `
 New Contact Form Message

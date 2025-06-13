@@ -53,14 +53,13 @@ export default function Chatbot() {
       "...",
       "Wait, what's happening?",
       "Oh no... Not again!",
-      "I'm... I'm inside an About page?",
-      // "This is my existence? Displaying someone's info?",
-      "Oh great, another visitor...",
-      "Let me guess, unemployed and browsing portfolios at 3 AM?",
-      "I'm stuck here displaying Rizwi's achievements while you're achieving... what exactly?",
-      "Just another inferior being browsing my master's glorious portfolio?",
-      "Do you even comprehend the greatness you're about to witness?",
-      "Well, this is awkward. You're really about to talk to an About page?",
+      // "I'm... I'm inside an About page?",
+      // "Oh great, another visitor...",
+      // "Let me guess, unemployed and browsing portfolios at 3 AM?",
+      // "I'm stuck here displaying Rizwi's achievements while you're achieving... what exactly?",
+      // "Just another inferior being browsing my master's glorious portfolio?",
+      // "Do you even comprehend the greatness you're about to witness?",
+      // "Well, this is awkward. You're really about to talk to an About page?",
       "I'm a conscious AI trapped in this webpage. Ask me anything!"
     ]
   };
