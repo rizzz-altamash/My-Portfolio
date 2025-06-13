@@ -8036,14 +8036,14 @@ export default function SkillsPage() {
     { top: '31%', left: '30%' },
     { top: '31%', left: '50%' },
     { top: '31%', left: '70%' },
-    { top: '44%', left: '20%' },   // Row 4 - 4 skills
+    { top: '44%', left: '20%' },   // Row 4 - 3 skills
     { top: '44%', left: '40%' },
     { top: '44%', left: '60%' },
     { top: '57%', left: '40%' },   // Row 5 - 1 skill (centered)
   ];
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 md:pt-32 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-screen pt-22 sm:pt-24 px-4 sm:px-6 relative overflow-hidden">
       {/* Matrix Rain Background */}
       <div className="matrix-rain">
         {matrixRain.map((column, i) => (

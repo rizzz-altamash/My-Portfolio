@@ -1,7 +1,7 @@
 // app/page.js
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Terminal, Lock, Github, Linkedin, Twitter } from 'lucide-react';
+import { ChevronRight, Terminal, Lock } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTransition } from './layout';
@@ -100,18 +100,6 @@ export default function HomePage() {
           </div>
         {/* )} */}
       </div>
-      </div>
-      
-      <div className="pb-8 flex justify-center gap-4">
-        {[Github, Linkedin, Twitter].map((Icon, i) => (
-          <a 
-            key={i} 
-            href="#" 
-            className="text-green-400/70 hover:text-green-400 transition-all duration-300 hover:scale-110 hover:rotate-12"
-          >
-            <Icon className="w-6 h-6" />
-          </a>
-        ))}
       </div>
 
       {/* <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">

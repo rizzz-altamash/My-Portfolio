@@ -9479,7 +9479,7 @@ export default function ContactPage() {
   }, [particles, isMobile]);
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-screen pt-22 sm:pt-24 px-4 sm:px-6 relative overflow-hidden">
       {/* Enhanced animated background */}
       <div className="fixed inset-0 z-0">
         <div className="absolute inset-0 bg-gradient-to-br from-black via-green-950/10 to-black" />

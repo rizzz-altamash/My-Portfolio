@@ -1824,23 +1824,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 px-4 sm:px-6 relative">
-      {/* Background Matrix Effect */}
-      <div className="fixed inset-0 overflow-hidden opacity-5">
-        {Array.from({ length: 30 }, (_, i) => (
-          <div
-            key={i}
-            className="absolute text-green-400 text-xs font-mono animate-matrix-fall hidden sm:block"
-            style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 10}s`,
-              animationDuration: `${10 + Math.random() * 10}s`
-            }}
-          >
-            {Math.random() > 0.5 ? '01101001' : 'ACCESS'}
-          </div>
-        ))}
-      </div>
+    <div className="min-h-screen pt-22 sm:pt-24 px-4 sm:px-6 relative">
 
       <div className="max-w-7xl mx-auto relative z-10">
         <div className="mb-6 sm:mb-8">
